@@ -1,5 +1,8 @@
 let fromLatitude;
 let fromLongitude;
+let toLatitude;
+let toLongitude;
+
 const suggestedLocation = document.getElementById('suggestedLocation');
 const suggestedDestination = document.getElementById('suggestedDestination');
 
@@ -63,7 +66,7 @@ function updateSuggestedLocations(direction, addresses) {
         addresses.forEach((address) => {
             const li = document.createElement('li');
             li.innerHTML = address.LocationName;
-            li.classList.add('list-group-item-action');
+            li.classList.add('dropdown-item');
             li.setAttribute('data-bs-toggle', 'offcanvas');
             li.setAttribute('data-bs-target', '#offcanvasBottom');
             li.setAttribute('aria-controls', 'offcanvasBottom');
@@ -82,11 +85,18 @@ function updateSuggestedLocations(direction, addresses) {
         addresses.forEach((address) => {
             const li = document.createElement('li');
             li.innerHTML = address.LocationName;
-            li.innerHTML = address.LocationName;
-            li.classList.add('list-group-item-action');
+            li.classList.add('dropdown-item');
             suggestedDestination.appendChild(li);
             li.addEventListener('click', () => {
                 document.getElementById('destinationInput').value = address.LocationName;
-                });});
-            
+                toLatitude = address.Latitude;
+                toLongitude = address.Longitude;
+                drawMap(toLatitude,toLongitude);
+                });});          
+
+                
 }};
+
+
+
+
