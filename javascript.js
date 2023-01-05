@@ -61,18 +61,21 @@ function searchAddresses(direction, filter) {
 function updateSuggestedLocations(direction, addresses) {
     if (direction === 'from') {
         addresses.forEach((address) => {
-            const li = document.createElement('li');
-            li.innerHTML = address.LocationName;
-            li.classList.add('list-group-item-action');
-            li.setAttribute('data-bs-toggle', 'offcanvas');
-            li.setAttribute('data-bs-target', '#offcanvasBottom');
-            li.setAttribute('aria-controls', 'offcanvasBottom');
-            li.setAttribute('data-bs-scroll', 'true');
-            suggestedLocation.appendChild(li);
-            li.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.classList.add( 'text-sm');
+            div.innerHTML = `
+                <div class="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
+                    <span class="bg-gray-400 rounded-full"></span>
+                    <div class="flex-grow font-medium px-2">${address.LocationName}</div>
+                </div>
+            `;
+            suggestedLocation.appendChild(div);
+            div.addEventListener('click', () => {
                 document.getElementById('locationInput').value = address.LocationName;
                 fromLatitude = address.Latitude;
                 fromLongitude = address.Longitude;
+                suggestedLocation.innerHTML="";
+
 
                 drawMap(fromLatitude, fromLongitude);
             });
@@ -80,13 +83,18 @@ function updateSuggestedLocations(direction, addresses) {
     }
     else if (direction === 'to') {
         addresses.forEach((address) => {
-            const li = document.createElement('li');
-            li.innerHTML = address.LocationName;
-            li.innerHTML = address.LocationName;
-            li.classList.add('list-group-item-action');
-            suggestedDestination.appendChild(li);
-            li.addEventListener('click', () => {
+            const div = document.createElement('div');
+            div.classList.add('py-3', 'text-sm');
+            div.innerHTML = `
+                <div class="flex justify-start cursor-pointer text-gray-700 hover:text-blue-400 hover:bg-blue-100 rounded-md px-2 py-2 my-2">
+                    <span class="bg-gray-400 h-2 w-2 m-2 rounded-full"></span>
+                    <div class="flex-grow font-medium px-2">${address.LocationName}</div>
+                </div>
+            `;
+            suggestedDestination.appendChild(div);
+            div.addEventListener('click', () => {
                 document.getElementById('destinationInput').value = address.LocationName;
-                });});
-            
-}};
+            });
+        });
+    }
+}
