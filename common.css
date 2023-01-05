@@ -2,7 +2,7 @@
     body {
       background-color: lightblue;
     }
-  }
+  
   
   p{
     background: #cce5ff;
@@ -11,14 +11,14 @@
     border-radius: 5px;
   }
   
-  
-  
 
   iframe {
     position: relative;
     z-index: 1;
     top: -70px;
   }
+#useLocation{
+  border-radius: 15px;}
   
   #fromLocation {
     width: 100%;
@@ -29,6 +29,7 @@
   }
   
   .big-offcanvas {
-    height: 50% !important; /* increase the width to 500px */
+    height: 55% !important; 
     border-radius: 20px;
   }
+  
