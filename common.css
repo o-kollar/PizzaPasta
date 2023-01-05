@@ -1,16 +1,9 @@
-@media only screen and (max-width: 600px) {
+
     /* styles for mobile devices */
     body {
       background-color: lightblue;
     }
-  }
-  
-  @media only screen and (min-width: 601px) {
-    /* styles for desktop and other devices with a width greater than 600px */
-    body {
-      display: none;
-    }
-  }
+
     ul {
     background-olr: #3399ff;
     padding: 20px;
