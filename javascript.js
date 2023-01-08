@@ -3,6 +3,8 @@ let fromLongitude;
 let toLatitude;
 let toLongitude;
 let map;
+let formattedTime;
+
 
 const suggestedLocation = document.getElementById('suggestedLocation');
 const accessToken = 'jR4PvdBCd8gBm7fxteQk7nhWntWn9XRbdPTVn7Sbcq4kV41ZoqgKpyKnPDHUmDwd';
@@ -10,7 +12,7 @@ const accessToken = 'jR4PvdBCd8gBm7fxteQk7nhWntWn9XRbdPTVn7Sbcq4kV41ZoqgKpyKnPDH
 window.onload = function loadmap() {
     map = new maplibregl.Map({
         container: 'map',
-         style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
+       style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
         zoom: 6,
         center: [17.11904355960693, 48.16150637919123],
     });
@@ -167,8 +169,12 @@ function getRoute(coordinates) {
 }
 
 function getTimeTable() {
+
+    // Create a new XMLHttpRequest object 
     const currentTime = new Date();
-    const formattedTime = currentTime.toISOString();
+currentTime.setHours(currentTime.getHours());
+ formattedTime = currentTime.toISOString();
+console.log(formattedTime)
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'https://clientapi.dopravnakarta.sk/api/v2/GetConnectionsFromLocationToLocation', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
@@ -203,86 +209,6 @@ function getTimeTable() {
 
     xhr.send(params);
 }
-function Table(connections) {
-    let stops = [`[${fromLongitude}, ${fromLatitude}]`];
-    connections.forEach((connection) => {
-        console.log('Connection:', connection);
-        const minutes = connection.TotalMinutesTraveled;
-        const hours = Math.floor(minutes / 60);
-        const remainingMinutes = minutes % 60;
-
-        const outerDiv = document.createElement('div');
-        outerDiv.className = 'max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700';
-
-        const link = document.createElement('a');
-        link.href = '#';
-
-        const heading = document.createElement('h6');
-        heading.className = 'mb-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white';
-        if(hours === 0){heading.textContent = `${remainingMinutes}m`;}
-        else {heading.textContent = `${hours}h ${remainingMinutes}m`;}
-        link.appendChild(heading);
-
-        const ul = document.createElement('ul');
-        ul.className =
-            'w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white';
-
-        connection.ConnectionSegments.forEach((segment) => {
-            const fromStop = segment.FromStop.StopName;
-            const timestamp = segment.FromDepartureTime;
-
-            // Split the timestamp into its individual parts
-            const dateStr = timestamp.split('T')[0];
-            const timeStr = timestamp.split('T')[1];
-            const offsetStr = timeStr.substring(timeStr.length - 6);
-
-            // Convert the time zone offset to the number of hours it represents
-            const offsetHours = parseInt(offsetStr.substring(1, 3));
-
-            // Add the time zone offset to the time
-            const date = new Date(`${dateStr}T${timeStr.substring(0, timeStr.length - 6)}Z`);
-            date.setHours(date.getHours() + offsetHours);
-
-            // Use the toLocaleTimeString method to display the time in 24-hour format
-            const options = {
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: false,
-            };
-            const formattedTime = date.toLocaleTimeString('en-US', options);
-            console.log(formattedTime); // Outputs "22:59"
-            const stopName = segment.ToStop.StopName;
-            const arrivalTime = segment.ToArrivalTime;
-            console.log('segment', segment);
-            const li = document.createElement('li');
-            if (segment.TimeTableTrip !== null) {
-                li.textContent = `${segment.TimeTableTrip.TimeTableLine.Line}, ${formattedTime}`;
-            } else {
-                li.textContent = `${formattedTime}`;
-            }
-            ul.appendChild(li);
-
-            const li2 = document.createElement('li');
-            li2.textContent = `${segment.ToStop.StopName}, `;
-            ul.appendChild(li2);
-
-            link.appendChild(ul);
-            outerDiv.appendChild(link);
-
-            // Append the outerDiv to the desired parent element
-            const parent = document.getElementById('drawer-bottom-example');
-            parent.appendChild(outerDiv);
-
-            if (segment.ToStop.AvgLatitude !== 0 && segment.ToStop.AvgLongitude !== 0) {
-                stops.push(`[${segment.ToStop.AvgLongitude}, ${segment.ToStop.AvgLatitude}]`);
-            }
-        });
-    });
-    stops.push(`[${toLongitude}, ${toLatitude}]`);
-
-    getRoute(stops);
-}
-
 
 function displayTimeTable(connections) {
     let stops = [`[${fromLongitude}, ${fromLatitude}]`];
@@ -314,24 +240,25 @@ function displayTimeTable(connections) {
       ol.className = 'relative border-l border-gray-200 dark:border-gray-700';
   
       connection.ConnectionSegments.forEach((segment) => {
+          console.log(segment)
+          if(segment.TimeTableTrip !== null && segment.TimeTableTrip.TripID !== null ){
+           // getVehicleDetails(segment.TimeTableTrip.TripID);
+          }
+            
         if (segment.ToStop.AvgLatitude !== 0 && segment.ToStop.AvgLongitude !== 0) {
             stops.push(`[${segment.ToStop.AvgLongitude}, ${segment.ToStop.AvgLatitude}]`);
         }
         const fromStop = segment.FromStop.StopName;
         const timestamp = segment.FromDepartureTime;
-  
         // Split the timestamp into its individual parts
         const dateStr = timestamp.split('T')[0];
         const timeStr = timestamp.split('T')[1];
         const offsetStr = timeStr.substring(timeStr.length - 6);
-  
         // Convert the time zone offset to the number of hours it represents
         const offsetHours = parseInt(offsetStr.substring(1, 3));
-  
         // Add the time zone offset to the time
         const date = new Date(`${dateStr}T${timeStr.substring(0, timeStr.length - 6)}Z`);
-        date.setHours(date.getHours() + offsetHours);
-  
+        date.setUTCHours(date.getUTCHours() - 1)
         // Use the toLocaleTimeString method to display the time in 24-hour format
         const options = {
           hour: 'numeric',
@@ -363,7 +290,10 @@ span.appendChild(icon);
       // Create the time element
       const time = document.createElement('time');
       time.className = 'mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500';
-      time.textContent = formattedTime;
+      if(segment.DelayMinutes !== null ){
+      time.textContent = `${formattedTime} meškaná ${segment.DelayMinutes}`;}
+      else time.textContent = formattedTime
+
 
       // Create the heading element
       const h3 = document.createElement('h3');
@@ -393,5 +323,40 @@ span.appendChild(icon);
             
   });
   getRoute(stops);
-}
+  getVehicleDetails();
   
+}
+
+function getVehicleDetails(tripiD){
+    const request = new XMLHttpRequest();
+    request.open('POST', 'https://clientapi.dopravnakarta.sk/api/v2/GetRealVehicleOfTrip2', true);
+    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+    request.setRequestHeader('Accept', 'application/json, text/javascript, */*; q=0.01');
+    request.setRequestHeader('Accept-Language', 'en-GB,en;q=0.9');
+    request.setRequestHeader('Accept-Encoding', 'gzip, deflate, br');
+    request.setRequestHeader('Host', 'clientapi.dopravnakarta.sk');
+    request.setRequestHeader('Origin', 'https://clientapi.dopravnakarta.sk');
+    request.setRequestHeader('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.1 Safari/605.1.15');
+    request.setRequestHeader('Referer', 'https://clientapi.dopravnakarta.sk/');
+    request.setRequestHeader('Connection', 'keep-alive');
+    request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    request.setRequestHeader('X-API-Key', '00112233445566778899');
+    request.setRequestHeader('X-App-Version', '1');
+    
+    const formData = {
+        tripID: tripiD,
+        dateTime: formattedTime,
+    };
+
+    const params = new URLSearchParams();
+    for (const key in formData) {
+        params.set(key, formData[key]);
+    }
+
+    request.onload = function() {
+      console.log(request.response);
+    };
+    
+    request.send(params);
+    
+}
