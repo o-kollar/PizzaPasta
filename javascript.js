@@ -167,6 +167,8 @@ function getRoute(coordinates) {
 }
 
 function getTimeTable() {
+    let stops = [`[${fromLongitude}, ${fromLatitude}]`];
+    getRoute(stops);
     const currentTime = new Date();
     const formattedTime = currentTime.toISOString();
     const xhr = new XMLHttpRequest();
@@ -392,6 +394,6 @@ span.appendChild(icon);
             parent.appendChild(outerDiv);
             
   });
-  getRoute(stops);
+
 }
   
