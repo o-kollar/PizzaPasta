@@ -170,7 +170,7 @@ function getTimeTable() {
     const currentTime = new Date();
     const formattedTime = currentTime.toISOString();
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'http://clientapi.dopravnakarta.sk/api/v2/GetConnectionsFromLocationToLocation', true);
+    xhr.open('POST', 'https://clientapi.dopravnakarta.sk/api/v2/GetConnectionsFromLocationToLocation', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     xhr.setRequestHeader('Accept', 'application/json, text/javascript, */*; q=0.01');
     xhr.setRequestHeader('X-API-Key', '00112233445566778899');
