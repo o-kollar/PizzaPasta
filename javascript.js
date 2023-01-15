@@ -113,11 +113,8 @@ function updateSuggestedLocations(addresses) {
                 suggestedLocation.removeChild(suggestedLocation.firstChild);
             }
             
-            map.fitBounds([
-[fromLatitude, fromLongitude],
-[toLatitude, toLongitude]
-]);
-            //drawMap(toLatitude, toLongitude);
+            
+            drawMap(toLatitude, toLongitude);
             getTimeTable();
         });
     });
