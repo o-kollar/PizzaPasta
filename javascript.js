@@ -112,7 +112,12 @@ function updateSuggestedLocations(addresses) {
             while (suggestedLocation.firstChild) {
                 suggestedLocation.removeChild(suggestedLocation.firstChild);
             }
-            drawMap(toLatitude, toLongitude);
+            
+            map.fitBounds([
+[fromLatitude, fromLongitude],
+[toLatitude, toLongitude]
+]);
+            //drawMap(toLatitude, toLongitude);
             getTimeTable();
         });
     });
